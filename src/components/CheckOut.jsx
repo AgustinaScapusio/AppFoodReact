@@ -16,7 +16,7 @@ const requestConfig = {
   },
 };
 
-export default function Checkout() {
+export default function CheckOut() {
   const cartCtx = useContext(CartContext);
   const userProgressCtx = useContext(UserProgressContext);
 
