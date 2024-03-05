@@ -2,8 +2,36 @@ import fs from 'node:fs/promises';
 
 import bodyParser from 'body-parser';
 import express from 'express';
+// Import necessary modules
+const express = require('express');
+const { Client } = require('pg');
+const bodyParser = require('body-parser');
 
 const app = express();
+
+
+// Create a PostgreSQL client
+const client = new Client({
+  connectionString: process.env.DATABASE_URL, // Use the database URL provided by Vercel
+  ssl: {
+    rejectUnauthorized: false 
+  }
+});
+
+client.connect()
+  .then(() => {
+    console.log('Connected to PostgreSQL database');
+  })
+  .catch(error => {
+    console.error('Error connecting to PostgreSQL database:', error);
+  });
+
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
+});
+
 
 app.use(bodyParser.json());
 app.use(express.static('public'));
@@ -23,7 +51,7 @@ app.get('/meals', async (req, res) => {
 app.post('/orders', async (req, res) => {
   const orderData = req.body.order;
 
-  if (orderData === null || orderData.items === null || orderData.items === []) {
+  if (orderData === null || orderData.items === null) {
     return res
       .status(400)
       .json({ message: 'Missing data.' });
